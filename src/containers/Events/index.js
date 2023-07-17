@@ -11,27 +11,46 @@ const PER_PAGE = 9;
 
 const EventList = () => {
   const { data, error } = useData();
-  const [type, setType] = useState();
+  const [type, setType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const filteredEvents = (
-    (!type
-      ? data?.events
-      : data?.events) || []
-  ).filter((event, index) => {
-    if (
-      (currentPage - 1) * PER_PAGE <= index &&
-      PER_PAGE * currentPage > index
-    ) {
-      return true;
-    }
-    return false;
-  });
-  const changeType = (evtType) => {
+
+   const changeType = evtType => {
     setCurrentPage(1);
     setType(evtType);
-  };
+   };
+
+  // const filteredEvents = (
+  //   (!selectedType
+  //     ? data?.events
+  //     : data?.events) || []
+  // ).filter((event, index) => {
+  //   if (
+  //     (currentPage - 1) * PER_PAGE <= index &&
+  //     PER_PAGE * currentPage > index
+  //   ) {
+  //   if (event.type === selectedType) {
+  //     return true;
+  //   }
+  //   }
+  //   return false;
+  // });
+
+  const filteredEvents = (
+    (!type ? data?.events : data?.events) || []
+  ).filter((event) => {
+    if (!type) {
+      return true; // Aucun type sélectionné, afficher tous les événements
+    }
+    return event.type === type; // Seuls les événements avec le type correspondant sont affichés
+  }).filter((event, index) => {
+    const startIndex = (currentPage - 1) * PER_PAGE;
+    const endIndex = startIndex + PER_PAGE;
+    return index >= startIndex && index < endIndex;
+  });;
+
   const pageNumber = Math.floor((filteredEvents?.length || 0) / PER_PAGE) + 1;
   const typeList = new Set(data?.events.map((event) => event.type));
+
   return (
     <>
       {error && <div>An error occured</div>}

@@ -8,50 +8,57 @@ const mockContactApi = () => new Promise((resolve) => { setTimeout(resolve, 1000
 
 const Form = ({ onSuccess, onError }) => {
   const [sending, setSending] = useState(false);
-  const sendContact = useCallback(
-    async (evt) => {
-      evt.preventDefault();
-      setSending(true);
-      // We try to call mockContactApi
-      try {
-        await mockContactApi();
-        setSending(false);
-      } catch (err) {
-        setSending(false);
-        onError(err);
-      }
-    },
-    [onSuccess, onError]
-  );
+  const [submitted, setSubmitted] = useState(false);
+
+  const sendContact = useCallback(async (evt) => {
+    evt.preventDefault();
+    setSending(true);
+
+    // Appel à l'API de contact (ici, un appel fictif)
+    try {
+      await mockContactApi();
+      setSending(false);
+      setSubmitted(true); // Marquer le formulaire comme soumis avec succès
+    } catch (err) {
+      setSending(false);
+      onError(err);
+    }
+  }, [onSuccess, onError]);
+
   return (
     <form onSubmit={sendContact}>
-      <div className="row">
-        <div className="col">
-          <Field placeholder="" label="Nom" />
-          <Field placeholder="" label="Prénom" />
-          <Select
-            selection={["Personel", "Entreprise"]}
-            onChange={() => null}
-            label="Personel / Entreprise"
-            type="large"
-            titleEmpty
-          />
-          <Field placeholder="" label="Email" />
-          <Button type={BUTTON_TYPES.SUBMIT} disabled={sending}>
-            {sending ? "En cours" : "Envoyer"}
-          </Button>
+      {submitted ? (
+        <div>Message envoyé avec succès !</div>
+      ) : (
+        <div className="row">
+          <div className="col">
+            <Field placeholder="" label="Nom" />
+            <Field placeholder="" label="Prénom" />
+            <Select
+              selection={["Personel", "Entreprise"]}
+              onChange={() => null}
+              label="Personel / Entreprise"
+              type="large"
+              titleEmpty
+            />
+            <Field placeholder="" label="Email" />
+            <Button type={BUTTON_TYPES.SUBMIT} disabled={sending}>
+              {sending ? "En cours" : "Envoyer"}
+            </Button>
+          </div>
+          <div className="col">
+            <Field
+              placeholder="message"
+              label="Message"
+              type={FIELD_TYPES.TEXTAREA}
+            />
+          </div>
         </div>
-        <div className="col">
-          <Field
-            placeholder="message"
-            label="Message"
-            type={FIELD_TYPES.TEXTAREA}
-          />
-        </div>
-      </div>
+      )}
     </form>
   );
 };
+
 
 Form.propTypes = {
   onError: PropTypes.func,

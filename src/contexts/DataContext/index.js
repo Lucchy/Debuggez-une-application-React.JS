@@ -19,17 +19,31 @@ export const api = {
 export const DataProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+
+
+  const calculateLastEvent = () => {
+    if (data && data.events.length > 0) {
+      const sortedEvents = data.events.sort((a, b) => new Date(b.date) - new Date(a.date));
+      return sortedEvents[0];
+    }
+    return null;
+  };
+
   const getData = useCallback(async () => {
     try {
+
       setData(await api.loadData());
+
     } catch (err) {
       setError(err);
     }
-  }, []);
+  }, [])
+
   useEffect(() => {
     if (data) return;
     getData();
   });
+
   
   return (
     <DataContext.Provider
@@ -37,6 +51,7 @@ export const DataProvider = ({ children }) => {
       value={{
         data,
         error,
+        last : calculateLastEvent(),
       }}
     >
       {children}
@@ -44,9 +59,10 @@ export const DataProvider = ({ children }) => {
   );
 };
 
+
 DataProvider.propTypes = {
   children: PropTypes.node.isRequired,
-}
+};
 
 export const useData = () => useContext(DataContext);
 
