@@ -20,10 +20,10 @@ export const DataProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
 
-
+// ajout d'une fonction pour calculer l'événement le plus récent 
   const calculateLastEvent = () => {
-    if (data && data.events.length > 0) {
-      const sortedEvents = data.events.sort((a, b) => new Date(b.date) - new Date(a.date));
+    if (data && data?.events?.length > 0) {
+      const sortedEvents = data?.events.sort((a, b) => new Date(b.date) - new Date(a.date));
       return sortedEvents[0];
     }
     return null;

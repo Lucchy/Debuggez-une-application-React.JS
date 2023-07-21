@@ -12,5 +12,5 @@ export const MONTHS = {
   10: "novembre",
   11: "décembre",
 };
-
+// modification des index 1 à 12 par 0 à 11
 export const getMonth = (date) => MONTHS[date.getMonth()];
